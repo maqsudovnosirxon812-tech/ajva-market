@@ -1,0 +1,11 @@
+<div class="bottom-nav">
+    <a href="/" th:classappend="${activePage=='home'} ? 'active' : ''">
+        🏠<br>Bosh sahifa
+    </a>
+    <a href="/cart" th:classappend="${activePage=='cart'} ? 'active' : ''">
+        🛒<br>Savat
+    </a>
+    <a href="/profile" th:classappend="${activePage=='profile'} ? 'active' : ''">
+        👤<br>Profile
+    </a>
+</div>
