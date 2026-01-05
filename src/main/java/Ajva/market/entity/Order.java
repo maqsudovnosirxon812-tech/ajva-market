@@ -2,6 +2,8 @@ package Ajva.market.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -17,7 +19,14 @@ public class Order {
 
     private int quantity;
     private String status; // pending, accepted, rejected, delivered
-    private String image;  // agar karta orqali bo‘lsa foydalanuvchi rasm yuklashi
+    private String image;// agar karta orqali bo‘lsa foydalanuvchi rasm yuklashi
+    private String phone;
+    private String address;
+    private String paymentType;
+    private LocalDateTime orderDate = LocalDateTime.now();
+
+    @ManyToOne
+    private User worker; // Buyurtmani qabul qilgan ishchi
 
     // Getters va Setters
     public Long getId() { return id; }
@@ -32,4 +41,14 @@ public class Order {
     public void setStatus(String status) { this.status = status; }
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }
+    public User getWorker() { return worker; }
+    public void setWorker(User worker) { this.worker = worker; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getPaymentType() { return paymentType; }
+    public void setPaymentType(String paymentType) { this.paymentType = paymentType; }
+    public LocalDateTime getOrderDate() { return orderDate; }
+    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
 }

@@ -35,7 +35,7 @@ public class AuthController {
         return "register";
     }
 
-    @PostMapping("/register")
+    @PostMapping({"/register"})
     public String registerSubmit(@ModelAttribute("user") User user,
                                  @RequestParam("profileImageFile") MultipartFile profileImageFile,
                                  Model model) throws IOException {
@@ -45,23 +45,22 @@ public class AuthController {
             return "register";
         }
 
-        // Parolni shifrlash
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
 
-        // Profil rasmni saqlash
         if (!profileImageFile.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + profileImageFile.getOriginalFilename();
-            String uploadDir = "/Users/macbookpro/Desktop/uploads/profile/";
+            String uploadDir = "./profile-photos/";
             File uploadPath = new File(uploadDir);
             if (!uploadPath.exists()) uploadPath.mkdirs();
-            profileImageFile.transferTo(new File(uploadDir + fileName));
-            user.setProfileImage("/profile/" + fileName);
-        } else {
-            // Default image
-            user.setProfileImage("/images/default-profile.png");
-        }
 
+            Path path = Paths.get(uploadDir + fileName);
+            Files.write(path, profileImageFile.getBytes());
+
+            user.setProfileImage("/profile-photos/" + fileName);
+        } else {
+            user.setProfileImage("/images/default-man-profile.png");
+        }
 
         userService.saveUser(user);
         return "redirect:/login";

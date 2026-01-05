@@ -29,16 +29,17 @@ public class ProfileController {
     }
 
     @PostMapping("/profile/updateImage")
-    public String updateProfileImage(@RequestParam("profileImageFile") MultipartFile profileImageFile,
+    public String updateProfileImage(@RequestParam("profileImageFile") MultipartFile file,
                                      Principal principal) throws IOException {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-        if (user != null && !profileImageFile.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + profileImageFile.getOriginalFilename();
-            String uploadDir = "uploads/profile/";
-            File uploadPath = new File(uploadDir);
-            if (!uploadPath.exists()) uploadPath.mkdirs();
-            profileImageFile.transferTo(new File(uploadDir + fileName));
-            user.setProfileImage("/" + uploadDir + fileName);
+        String username = principal.getName();
+        User user = userService.getUserByUsername(username);
+
+        if (!file.isEmpty()) {
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String uploadDir = "./profile-photos/";
+
+            Files.write(Paths.get(uploadDir + fileName), file.getBytes());
+            user.setProfileImage("/profile-photos/" + fileName);
             userService.saveUser(user);
         }
         return "redirect:/profile";

@@ -1,110 +1,269 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buyurtmani Tasdiqlash</title>
+    <title>Tasdiqlash - Ajva Market Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,900;1,900&family=Montserrat:wght@100;300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
     <style>
-        body { background-color: #f4f7f6; padding-bottom: 50px; }
-        .header { background: #198754; color: white; padding: 15px; display: flex; align-items: center; }
-        .back-btn { color: white; text-decoration: none; font-size: 1.5rem; margin-right: 15px; }
-        .cart-card { background: #fff; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        #map { height: 400px; width: 100%; border-radius: 10px; }
+        :root {
+            --p-dark: #062216;
+            --p-main: #198754;
+            --p-light: #2ecc71;
+            --soft-bg: #f8faf9;
+            --white: #ffffff;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-lux: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            background-color: var(--soft-bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--p-dark);
+            padding-bottom: 50px;
+        }
+
+        /* HEADER */
+        .lux-header {
+            background: var(--p-dark);
+            padding: 15px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        .back-btn:hover { color: var(--p-light); transform: translateX(-5px); }
+
+        /* PROGRESS STEPS */
+        .step-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+        .step-item {
+            z-index: 2;
+            text-align: center;
+            width: 33%;
+        }
+        .step-dot {
+            width: 35px; height: 35px;
+            background: #ddd;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center; justify-content: center;
+            color: white; font-weight: 800;
+        }
+        .step-item.active .step-dot { background: var(--p-main); box-shadow: 0 0 15px rgba(25,135,84,0.4); }
+        .step-label { font-size: 11px; font-weight: 800; color: #aaa; text-transform: uppercase; }
+        .step-item.active .step-label { color: var(--p-dark); }
+
+        /* MAIN CARD */
+        .checkout-card {
+            background: var(--white);
+            border-radius: 35px;
+            padding: 35px;
+            box-shadow: var(--shadow-lux);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .section-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            color: var(--p-main);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .form-control, .form-select {
+            border-radius: 15px;
+            padding: 12px 20px;
+            border: 2px solid #f0f0f0;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .form-control:focus {
+            border-color: var(--p-main);
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.1);
+        }
+
+        /* PAYMENT TYPE UX */
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .payment-option {
+            border: 2px solid #f0f0f0;
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .payment-option i { font-size: 24px; margin-bottom: 8px; display: block; }
+        .payment-option.active {
+            border-color: var(--p-main);
+            background: #f1f9f5;
+            color: var(--p-main);
+            transform: translateY(-5px);
+        }
+
+        /* ORDER SUMMARY */
+        .summary-box {
+            background: #f8faf9;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* MAP */
+        #map { height: 450px; width: 100%; border-radius: 25px; }
+        .map-search-btn {
+            position: absolute;
+            top: 15px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .btn-finish {
+            background: var(--p-dark);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            font-weight: 800;
+            width: 100%;
+            transition: var(--transition);
+        }
+        .btn-finish:hover { background: var(--p-main); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <a href="/cart" class="back-btn">&larr;</a>
-    <h4 class="mb-0">Ma'lumotlarni kiriting</h4>
-</div>
+<header class="lux-header">
+    <div class="container">
+        <a href="/cart" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> SAVATGA QAYTISH
+        </a>
+    </div>
+</header>
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="cart-card">
+        <div class="col-lg-6">
+
+            <div class="step-container animate__animated animate__fadeIn">
+                <div class="step-item"><div class="step-dot">1</div><div class="step-label">Savat</div></div>
+                <div class="step-item active"><div class="step-dot">2</div><div class="step-label">Ma'lumotlar</div></div>
+                <div class="step-item"><div class="step-dot">3</div><div class="step-label">Yakun</div></div>
+            </div>
+
+            <div class="checkout-card animate__animated animate__zoomIn">
+                <h3 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;">Buyurtmani <span style="color: var(--p-main)">rasmiylashtirish</span></h3>
 
                 <form th:action="@{/cart/checkout}" method="post" id="checkoutForm">
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Telefon raqam:</label>
-                        <input type="tel"
-                               class="form-control"
-                               name="phone"
-                               th:value="${defaultPhone}"
-                               placeholder="+998901234567"
-                               required>
+                    <span class="section-subtitle"><i class="fa-solid fa-phone-volume me-2"></i> KONTAKT MA'LUMOTLARI</span>
+                    <div class="mb-4">
+                        <input type="tel" class="form-control" name="phone" th:value="${defaultPhone}" placeholder="+998 90 123 45 67" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Yetkazib berish manzili:</label>
+                    <span class="section-subtitle"><i class="fa-solid fa-map-location-dot me-2"></i> YETKAZIB BERISH MANZILI</span>
+                    <div class="mb-4">
                         <div class="input-group">
-                            <input type="text"
-                                   class="form-control"
-                                   name="address"
-                                   id="address"
-                                   placeholder="Xaritadan tanlang"
-                                   readonly
-                                   required>
-                            <button type="button"
-                                    class="btn btn-outline-success"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#mapModal">
-                                📍 Xarita
+                            <input type="text" class="form-control" name="address" id="address" placeholder="Xaritadan tanlang" readonly required>
+                            <button type="button" class="btn btn-success px-4" style="border-radius: 0 15px 15px 0" data-bs-toggle="modal" data-bs-target="#mapModal">
+                                <i class="fa-solid fa-location-crosshairs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">To‘lov turi:</label>
-                        <select class="form-select" name="paymentType">
-                            <option value="cash">Naqd pul</option>
-                            <option value="card">Plastik karta</option>
-                        </select>
+                    <span class="section-subtitle"><i class="fa-solid fa-credit-card me-2"></i> TO'LOV USULI</span>
+                    <div class="payment-grid">
+                        <div class="payment-option active" onclick="selectPayment('cash', this)">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <span class="fw-bold small">NAQD PUL</span>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment('card', this)">
+                            <i class="fa-solid fa-wallet"></i>
+                            <span class="fw-bold small">PLASTIK KARTA</span>
+                        </div>
+                        <input type="hidden" name="paymentType" id="paymentTypeInput" value="cash">
                     </div>
 
-                    <button type="submit"
-                            class="btn btn-success w-100 mt-3 py-2 fw-bold">
-                        Buyurtmani Yakunlash
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span class="text-muted">Mahsulotlar soni:</span>
+                            <span th:text="${#lists.size(cartItems)} + ' ta'">0 ta</span>
+                        </div>
+                        <div class="summary-row" style="font-size: 18px; color: var(--p-dark); border-top: 1px dashed #ddd; pt-2; margin-top: 10px;">
+                            <span class="fw-bold">UMUMIY:</span>
+                            <span class="fw-bold text-success" th:text="${#numbers.formatDecimal(totalPrice, 0, 'WHITESPACE', 0, 'POINT')} + ' UZS'">0 UZS</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-finish">
+                        BUYURTMANI YAKUNLASH <i class="fa-solid fa-check-circle ms-2"></i>
                     </button>
-
                 </form>
-
             </div>
         </div>
     </div>
 </div>
 
-<!-- MAP MODAL -->
 <div class="modal fade" id="mapModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
+    <div class="modal-dialog modal-fullscreen-md-down modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 30px; overflow: hidden; border: none;">
+            <div class="modal-body p-0 position-relative">
+                <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" style="top:20px; right:20px; z-index: 1001; background-color: white; padding: 10px; border-radius: 50%; opacity: 1;"></button>
 
-            <div class="modal-header">
-                <h5 class="modal-title">Manzilni tanlang</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <div id="map"></div>
-                <p id="loc-status" class="text-muted mt-2 small">
-                    Xaritadan kerakli nuqtani bosing...
-                </p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button"
-                        class="btn btn-success"
-                        onclick="confirmLocation()"
-                        data-bs-dismiss="modal">
-                    Tanlash
+                <button type="button" class="map-search-btn" onclick="getCurrentLocation()">
+                    <i class="fa-solid fa-location-arrow me-2 text-primary"></i> MEENING JOYLASHUVIM
                 </button>
-            </div>
 
+                <div id="map"></div>
+
+                <div class="p-4 bg-white shadow-lg position-absolute w-100" style="bottom: 0; z-index: 1000; border-radius: 30px 30px 0 0;">
+                    <p id="loc-status" class="fw-bold text-muted small mb-3">
+                        <i class="fa-solid fa-hand-pointer me-2"></i> Xaritadan manzilni bosing...
+                    </p>
+                    <button type="button" class="btn btn-success w-100 py-3 fw-bold rounded-pill" onclick="confirmLocation()" data-bs-dismiss="modal">
+                        USHBU MANZILNI TASDIQLASH
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -115,48 +274,75 @@
 <script>
     let map, marker, tempAddr = "";
 
+    // Payment Selection
+    function selectPayment(val, el) {
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('paymentTypeInput').value = val;
+    }
+
+    // Leaflet Map logic
     document.getElementById('mapModal').addEventListener('shown.bs.modal', function () {
         if (!map) {
-            map = L.map('map').setView([41.311081, 69.240562], 13);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-                .addTo(map);
+            map = L.map('map', { zoomControl: false }).setView([41.311081, 69.240562], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
 
             map.on('click', function (e) {
-                if (marker) marker.setLatLng(e.latlng);
-                else marker = L.marker(e.latlng).addTo(map);
-
-                document.getElementById('loc-status').innerText = "Manzil aniqlanmoqda...";
-
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        tempAddr = data.display_name;
-                        document.getElementById('loc-status').innerText = "Tanlandi: " + tempAddr;
-                    });
+                updateMarker(e.latlng.lat, e.latlng.lng);
             });
         }
         map.invalidateSize();
     });
 
-    function confirmLocation() {
-        if (tempAddr) {
-            document.getElementById("address").value = tempAddr;
+    function updateMarker(lat, lng) {
+        if (marker) marker.setLatLng([lat, lng]);
+        else marker = L.marker([lat, lng]).addTo(map);
+
+        document.getElementById('loc-status').innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Aniqlanmoqda...';
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+            .then(res => res.json())
+            .then(data => {
+                tempAddr = data.display_name;
+                document.getElementById('loc-status').innerHTML = '<i class="fa-solid fa-location-dot me-2 text-danger"></i> ' + tempAddr;
+            });
+    }
+
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const { latitude, longitude } = position.coords;
+                map.setView([latitude, longitude], 17);
+                updateMarker(latitude, longitude);
+            });
         }
     }
 
-    // FORM SUBMIT (FETCH)
+    function confirmLocation() {
+        if (tempAddr) {
+            document.getElementById("address").value = tempAddr;
+            document.getElementById("address").classList.add('animate__animated', 'animate__bounceIn');
+        }
+    }
+
+    // FORM SUBMIT
     document.getElementById('checkoutForm').addEventListener('submit', function (e) {
         e.preventDefault();
+        const btn = this.querySelector('.btn-finish');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i> YUBORILMOQDA...';
 
         fetch(this.action, {
             method: 'POST',
             body: new FormData(this)
         }).then(res => {
             if (res.ok) {
-                window.location.href = '/orders';
+                window.location.href = '/profile'; // Buyurtma tugagach profilga yoki buyurtmalarga
             } else {
-                alert("Xatolik yuz berdi!");
+                alert("Xatolik! Ma'lumotlarni tekshiring.");
+                btn.disabled = false;
+                btn.innerHTML = 'BUYURTMANI YAKUNLASH';
             }
         });
     });

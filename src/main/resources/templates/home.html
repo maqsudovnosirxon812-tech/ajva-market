@@ -2,187 +2,596 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Ajva Market</title>
+    <meta charset="UTF-8">
+    <title>Ajva Market - The Ultra-Premium Digital Experience</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,900;1,900&family=Montserrat:wght@100;300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
 
     <style>
-        body {
-            background-color: #eaf7ef;
-            padding-bottom: 90px;
+        /* ================================================================
+           1. DESIGN SYSTEM - AJVA PRO (YANGI PREMIUM FON)
+           ================================================================
+        */
+        :root {
+            --p-dark: #062216;
+            --p-main: #198754;
+            --p-light: #2ecc71;
+            --accent: #f1c40f;
+            --danger: #ff4757;
+            --soft-bg: #eef2f0;
+            --white: #ffffff;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* ================= HEADER ================= */
-        .top-header {
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--soft-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--p-main); border-radius: 5px; }
+
+        body {
+            background-color: var(--soft-bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--p-dark);
+            padding-bottom: 120px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* YANGI: MESH GRADIENT ORQA FON EFFEKTI */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                    radial-gradient(at 0% 0%, rgba(25, 135, 84, 0.1) 0px, transparent 50%),
+                    radial-gradient(at 100% 0%, rgba(46, 204, 113, 0.08) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(241, 196, 15, 0.05) 0px, transparent 50%),
+                    radial-gradient(at 0% 100%, rgba(25, 135, 84, 0.1) 0px, transparent 50%);
+            z-index: -2;
+        }
+
+        /* SVG NAQSHNI BILDIRIB TURISH */
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23198754' fill-opacity='0.05'%3E%3Cpath d='M40 40c0-11.046-8.954-20-20-20S0 28.954 0 40s8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        /* ================================================================
+           2. HEADER & LOGO (SNOW ON TEXT & LOGO)
+           ================================================================
+        */
+        .lux-header {
+            background: var(--p-dark);
+            padding: 12px 0;
             position: sticky;
             top: 0;
             z-index: 1100;
-            background-color: #0f5132;
-            padding: 12px 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .logo {
-            color: #ffffff;
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin: 0;
-            cursor: pointer;
-            transition: all 0.4s ease;
-        }
-
-        .logo:hover {
-            transform: translateY(-6px) scale(1.08);
-            text-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
-
-        .cart-icon {
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none !important;
             position: relative;
-            font-size: 1.3rem;
-            color: white;
-            cursor: pointer;
         }
 
-        .cart-badge {
+        .logo-img-wrapper {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid var(--p-light);
+            z-index: 5;
+        }
+
+        /* HEADER QOR KONTEYNERI */
+        #header-snow-box {
             position: absolute;
-            top: -6px;
-            right: -10px;
-            background: red;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 50%;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            pointer-events: none;
+            z-index: 10;
         }
 
-        /* ================= CARD ================= */
-        .card {
-            transition: all 0.35s ease;
-            border-radius: 14px;
+        .snowflake-micro {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.7;
+            filter: blur(0.5px);
+            animation: microSnowFall linear infinite;
+        }
+
+        @keyframes microSnowFall {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(50px) translateX(10px); opacity: 0; }
+        }
+
+        .logo-img-wrapper img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            color: var(--white);
+            font-weight: 900;
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: 1px;
+            font-family: 'Montserrat', sans-serif;
+            z-index: 5;
+            position: relative;
+        }
+
+        .nav-cart-btn {
+            position: relative;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: var(--transition);
+        }
+
+        .badge-premium {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--danger);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+            border: 3px solid var(--p-dark);
+        }
+
+        /* ================================================================
+           3. HERO SECTION
+           ================================================================
+        */
+        .hero-wrap {
+            padding: 90px 0 50px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 15vw;
+            font-weight: 900;
+            color: rgba(25, 135, 84, 0.04);
+            z-index: -1;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 30px;
+        }
+
+        .main-shior {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 900;
+            color: var(--p-dark);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .main-shior span {
+            color: var(--p-main);
+            position: relative;
+        }
+
+        /* ================================================================
+           4. PRODUCT CARD SYSTEM
+           ================================================================
+        */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        @media (min-width: 992px) {
+            .product-grid { grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        }
+
+        .lux-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            position: relative;
+            height: 100%;
+        }
+
+        .lux-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .image-box {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #f9f9f9;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
             overflow: hidden;
         }
 
-        .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        .image-box img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            transition: var(--transition);
         }
 
-        .card img {
-            transition: transform 0.4s ease;
-        }
-
-        .card:hover img {
-            transform: scale(1.08);
-        }
-
-        .badge-discount {
+        .rating-chip {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #ff4d4d;
-            color: white;
-            font-size: 0.8rem;
-            padding: 5px 8px;
-            border-radius: 8px;
+            top: 25px; left: 25px;
+            background: rgba(255,255,255,0.9);
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--accent);
+            z-index: 5;
         }
 
-        /* ================= BOTTOM MENU ================= */
+        .discount-badge {
+            position: absolute;
+            top: 25px; right: 25px;
+            background: var(--danger);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 900;
+            z-index: 5;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .product-info { flex-grow: 1; }
+
+        .p-title {
+            font-size: 17px;
+            font-weight: 700;
+            height: 44px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            margin-bottom: 10px;
+        }
+
+        .price-box { min-height: 50px; margin-bottom: 15px; }
+
+        .old-price {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            text-decoration: line-through;
+            display: block;
+            font-weight: 600;
+        }
+
+        .p-price {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--p-main);
+        }
+
+        .p-price.discounted { color: var(--danger); }
+
+        .action-area {
+            height: 52px;
+            position: relative;
+            width: 100%;
+        }
+
+        .btn-add-lux {
+            width: 100%;
+            height: 100%;
+            background: var(--p-dark);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .btn-add-lux:hover { background: var(--p-main); }
+
+        .stepper-lux {
+            width: 100%;
+            height: 100%;
+            background: #f1f5f3;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px;
+        }
+
+        .step-trigger {
+            width: 42px;
+            height: 42px;
+            border: none;
+            background: white;
+            color: var(--p-main);
+            border-radius: 14px;
+            font-weight: 900;
+        }
+
+        .qty-text { font-weight: 900; font-size: 18px; color: var(--p-dark); }
+
+        /* ================================================================
+           5. BOTTOM NAVIGATION
+           ================================================================
+        */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 1px solid #ddd;
+            bottom: 25px; left: 50%;
+            transform: translateX(-50%);
+            width: 90%; max-width: 450px;
+            background: var(--p-dark);
+            padding: 10px 15px;
+            border-radius: 30px;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
             z-index: 1000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
-        .bottom-nav a {
-            text-decoration: none;
-            color: #666;
-            font-size: 13px;
+        .nav-item {
+            color: rgba(255,255,255,0.4);
+            text-decoration: none !important;
+            font-size: 10px; font-weight: 700;
             text-align: center;
-            transition: 0.3s;
+            transition: var(--transition);
         }
 
-        .bottom-nav a:hover {
-            transform: translateY(-4px);
-            color: #198754;
-        }
+        .nav-item i { display: block; font-size: 22px; margin-bottom: 2px; }
+        .nav-item.active { color: var(--p-light); transform: translateY(-5px); }
 
-        .bottom-nav a.active {
-            color: #198754;
-            font-weight: bold;
-        }
-
-        @media (max-width: 576px) {
-            .logo { font-size: 1.1rem; }
-            .card-title { font-size: 0.9rem; }
-            .fw-bold { font-size: 0.95rem; }
-        }
     </style>
 </head>
 <body>
 
-<div class="top-header">
-    <div class="logo-container" onclick="location.href='/'" style="cursor: pointer;">
-        <img th:src="@{/logo/logo.png}" alt="Ajva Market Logo" style="height: 40px; width: auto; transition: all 0.4s ease;">
-    </div>
+<div class="bg-pattern"></div>
 
-    <div class="cart-icon" onclick="location.href='/cart'">
-        🛒
-        <span class="cart-badge" th:text="${cartItems != null} ? ${#lists.size(cartItems)} : 0">0</span>
-    </div>
-</div>
-<!-- ================= SEARCH ================= -->
-<div class="container mt-4">
-    <form th:action="@{/search}" method="get" class="d-flex mb-4 shadow-sm p-3 bg-white rounded">
-        <input name="keyword" class="form-control me-2" placeholder="Mahsulot qidirish">
-        <button class="btn btn-success">Qidiruv</button>
-    </form>
-</div>
+<meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+<meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
 
-<!-- ================= PRODUCTS ================= -->
-<div class="container">
-    <div class="row" th:if="${products != null}">
-        <div class="col-md-3 col-sm-6 mb-4" th:each="product : ${products}">
-            <div class="card h-100 position-relative">
+<header class="lux-header">
+    <div class="container header-container">
+        <a th:href="@{/}" class="brand-box" id="brand-box-container">
+            <div id="header-snow-box"></div>
 
-                <span th:if="${product.discount != null}" class="badge-discount"
-                      th:text="'-' + ${product.discount} + '%'">
-                </span>
-
-                <img th:src="@{${product.image}}" class="card-img-top">
-
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title" th:text="${product.name}"></h6>
-                    <p class="fw-bold" th:text="${product.price} + ' so‘m'"></p>
-
-                    <!-- ===== ADD TO CART FORM ===== -->
-                    <form th:action="@{/cart/add}" method="post" class="mt-auto d-flex flex-column">
-                        <input type="hidden" name="productId" th:value="${product.id}">
-                        <input type="hidden" sec:csrfInput="true">
-                        <button class="btn btn-success w-100">Savatga qo‘shish</button>
-                    </form>
-
-                </div>
+            <div class="logo-img-wrapper">
+                <img th:src="@{/images/logo/logo.png}" alt="Ajva">
             </div>
+            <div class="brand-text">
+                <span class="brand-name">AJVA MARKET</span>
+            </div>
+        </a>
+
+        <a th:href="@{/cart}" class="nav-cart-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="badge-premium" id="global-badge" th:text="${cartItemsCount != null ? cartItemsCount : 0}">0</span>
+        </a>
+    </div>
+</header>
+
+<section class="hero-wrap">
+    <div class="hero-watermark">AJVA</div>
+    <div class="container">
+        <h1 class="main-shior animate__animated animate__fadeInDown">
+            TABIIYLIK YIL BO'YI<br><span>HAMROHINGIZ BO'LSIN</span>
+        </h1>
+    </div>
+</section>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <form th:action="@{/search}" method="get" class="d-flex bg-white p-2 rounded-pill shadow-sm">
+                <input name="keyword" class="form-control border-0 px-4 fw-bold" type="text" placeholder="Mahsulot qidirish..." th:value="${keyword}">
+                <button class="btn btn-dark rounded-pill px-4 py-2 fw-bold" type="submit">QIDIRISH</button>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- ================= BOTTOM MENU ================= -->
-<div class="bottom-nav">
-    <a href="/" class="active">🏠<br>Bosh sahifa</a>
-    <a href="/cart">🛒<br>Savat</a>
-    <a href="/profile">👤<br>Profile</a>
-</div>
+<main class="container">
+    <div class="product-grid">
+        <div class="lux-card animate__animated animate__fadeInUp" th:each="product, iterStat : ${products}" th:style="'animation-delay:' + (${iterStat.index} * 0.1) + 's'">
 
+            <div th:if="${product.discount > 0}" class="discount-badge" th:text="'-' + ${product.discount} + '%'">-15%</div>
+
+            <div class="rating-chip">
+                <i class="fa-solid fa-star"></i>
+                <span th:text="${#numbers.formatDecimal(product.getAverageRating(), 1, 1)}">5.0</span>
+            </div>
+
+            <div class="image-box" th:onclick="|window.location.href='/product/' + ${product.id}|">
+                <img th:src="${product.image}" th:alt="${product.name}" onerror="this.src='/images/no-image.png';">
+            </div>
+
+            <div class="product-info">
+                <h3 class="p-title" th:text="${product.name}">Mahsulot nomi</h3>
+
+                <div class="price-box">
+                    <small th:if="${product.discount > 0}" class="old-price"
+                           th:text="${#numbers.formatDecimal(product.price + (product.price * product.discount / 100), 0, 'WHITESPACE', 0, 'POINT')} + ' UZS'">
+                    </small>
+                    <div class="p-price" th:classappend="${product.discount > 0 ? 'discounted' : ''}"
+                         th:text="${#numbers.formatDecimal(product.price, 0, 'WHITESPACE', 0, 'POINT')} + ' UZS'">
+                    </div>
+                </div>
+
+                <div class="action-area" onclick="event.stopPropagation();">
+                    <div th:id="'add-wrap-' + ${product.id}" class="w-100 h-100">
+                        <button class="btn-add-lux" th:onclick="'addToCart(' + ${product.id} + ')'" th:disabled="${product.quantity <= 0}">
+                            <i class="fa-solid fa-plus-circle"></i> SAVATGA
+                        </button>
+                    </div>
+
+                    <div th:id="'qty-wrap-' + ${product.id}" class="stepper-lux d-none">
+                        <button class="step-trigger" th:onclick="'updateQty(' + ${product.id} + ', \'decrease\')'"><i class="fa-solid fa-minus"></i></button>
+                        <span class="qty-text" th:id="'qty-val-' + ${product.id}">1</span>
+                        <button class="step-trigger" th:onclick="'updateQty(' + ${product.id} + ', \'increase\')'"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<nav class="bottom-nav">
+    <a th:href="@{/}" class="nav-item active"><i class="fa-solid fa-house"></i>ASOSIY</a>
+    <a th:href="@{/cart}" class="nav-item"><i class="fa-solid fa-basket-shopping"></i>SAVAT</a>
+    <a th:href="@{/profile}" class="nav-item"><i class="fa-solid fa-user-circle"></i>PROFIL</a>
+    <a th:href="@{/admin}" sec:authorize="hasRole('ADMIN')" class="nav-item"><i class="fa-solid fa-gear"></i>ADMIN</a>
+</nav>
+
+<script>
+    /* ================================================================
+       1. HEADER SNOW ENGINE (TEXT + LOGO)
+       ================================================================
+    */
+    function initHeaderSnow() {
+        const container = document.getElementById('header-snow-box');
+        if(!container) return;
+
+        // 12 ta qor zarrasi logo va matn bo'ylab
+        for(let i = 0; i < 15; i++) {
+            let flake = document.createElement('div');
+            flake.className = 'snowflake-micro';
+            let size = Math.random() * 4 + 2;
+            flake.style.width = size + 'px';
+            flake.style.height = size + 'px';
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            flake.style.animationDelay = Math.random() * 3 + 's';
+            container.appendChild(flake);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initHeaderSnow);
+
+    /* ================================================================
+       2. CART ENGINE (CSRF VA LOGIKA)
+       ================================================================
+    */
+    const csrf = () => ({
+        token: document.querySelector('meta[name="_csrf"]')?.getAttribute('content'),
+        header: document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content')
+    });
+
+    async function apiCall(url, pid) {
+        const { token, header } = csrf();
+        const fd = new FormData();
+        fd.append('productId', pid);
+        return fetch(url, {
+            method: 'POST',
+            headers: { [header]: token },
+            body: fd
+        });
+    }
+
+    function addToCart(pid) {
+        apiCall('/cart/add', pid).then(res => {
+            if(res.ok) {
+                const add = document.getElementById('add-wrap-' + pid);
+                const qty = document.getElementById('qty-wrap-' + pid);
+                add.classList.add('animate__animated', 'animate__zoomOut');
+                setTimeout(() => {
+                    add.classList.add('d-none');
+                    qty.classList.remove('d-none');
+                    qty.classList.add('animate__animated', 'animate__zoomIn');
+                    updateBadge(1);
+                }, 200);
+            }
+        });
+    }
+
+    function updateQty(pid, action) {
+        const url = action === 'increase' ? '/cart/increase' : '/cart/decrease';
+        apiCall(url, pid).then(res => {
+            if(res.ok) {
+                const label = document.getElementById('qty-val-' + pid);
+                let val = parseInt(label.innerText);
+                if(action === 'increase') {
+                    label.innerText = val + 1;
+                    label.classList.add('animate__animated', 'animate__bounceIn');
+                    setTimeout(() => label.classList.remove('animate__animated', 'animate__bounceIn'), 400);
+                } else {
+                    if(val > 1) {
+                        label.innerText = val - 1;
+                    } else {
+                        const add = document.getElementById('add-wrap-' + pid);
+                        const qty = document.getElementById('qty-wrap-' + pid);
+                        qty.classList.add('animate__animated', 'animate__fadeOut');
+                        setTimeout(() => {
+                            qty.classList.add('d-none');
+                            qty.classList.remove('animate__animated', 'animate__fadeOut');
+                            add.classList.remove('d-none', 'animate__zoomOut');
+                            add.classList.add('animate__animated', 'animate__zoomIn');
+                            apiCall('/cart/remove', pid).then(() => updateBadge(-1));
+                        }, 200);
+                    }
+                }
+            }
+        });
+    }
+
+    function updateBadge(diff) {
+        const b = document.getElementById('global-badge');
+        if(b) b.innerText = Math.max(0, parseInt(b.innerText) + diff);
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -54,4 +54,14 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @Transactional
+    public Order getOrderById(Long orderId) {
+        orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Buyurtma topilmadi: " + orderId));
+        return orderRepository.findById(orderId).get();
+    }
+
+    public void saveOrder(Order order) {
+        orderRepository.save(order);
+    }
 }

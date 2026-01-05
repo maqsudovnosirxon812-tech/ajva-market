@@ -18,6 +18,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String profileImage;
+    private Double salary; // Ishchi maoshi
+    private Integer completedOrders = 0; // Yetkazib berilgan buyurtmalar soni
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
@@ -43,12 +45,15 @@ public class User {
     public void setCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
     public List<Order> getOrders() { return orders; }
     public void setOrders(List<Order> orders) { this.orders = orders; }
-
     public Gender getGender() {
         return gender;
     }
-
     public void setGender(Gender gender) {
         this.gender = gender;
     }
+    public Double getSalary() { return salary; }
+    public void setSalary(Double salary) { this.salary = salary; }
+    public Integer getCompletedOrders() { return completedOrders; }
+    public void setCompletedOrders(Integer completedOrders) { this.completedOrders = completedOrders; }
+
 }

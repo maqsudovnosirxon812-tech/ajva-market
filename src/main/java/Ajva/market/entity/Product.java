@@ -2,6 +2,8 @@ package Ajva.market.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Product {
     @Id
@@ -14,9 +16,15 @@ public class Product {
     private int quantity;
     private String image;
     private Double discount;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Review> reviews;
 
 
-    // Getters va Setters
+    public double getAverageRating() {
+        if (reviews == null || reviews.isEmpty()) return 0;
+        return reviews.stream().mapToInt(Review::getStars).average().orElse(0);
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
