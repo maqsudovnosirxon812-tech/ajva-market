@@ -39,7 +39,6 @@ public class OrderService {
         order.setStatus("rejected");
         orderRepository.save(order);
     }
-    // Barcha foydalanuvchilar buyurtmalarini olish
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
@@ -50,7 +49,7 @@ public class OrderService {
         order.setUser(user);
         order.setProduct(product);
         order.setQuantity(quantity);
-        order.setStatus("Yangi"); // default status
+        order.setStatus("Yangi");
         orderRepository.save(order);
     }
 

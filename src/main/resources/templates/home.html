@@ -146,6 +146,30 @@
             position: relative;
         }
 
+        /* YANGI: LOGIN VA REGISTER TUGMALARI USLUBLARI */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-auth {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 8px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: var(--transition);
+        }
+
+        .btn-auth:hover {
+            background: var(--p-main);
+            border-color: var(--p-main);
+            color: white;
+        }
+
         .nav-cart-btn {
             position: relative;
             background: rgba(255,255,255,0.1);
@@ -154,6 +178,7 @@
             border-radius: 15px;
             border: 1px solid rgba(255,255,255,0.2);
             transition: var(--transition);
+            text-decoration: none;
         }
 
         .badge-premium {
@@ -243,6 +268,27 @@
             background: white;
         }
 
+        /* YANGI: FAVORITE TUGMASI */
+        .btn-fav-card {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 10;
+            background: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ddd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+        .btn-fav-card.active { color: var(--danger); }
+        .btn-fav-card:hover { transform: scale(1.1); }
+
         .image-box {
             width: 100%;
             aspect-ratio: 1/1;
@@ -253,6 +299,7 @@
             justify-content: center;
             margin-bottom: 15px;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .image-box img {
@@ -276,7 +323,7 @@
 
         .discount-badge {
             position: absolute;
-            top: 25px; right: 25px;
+            bottom: 60px; right: 25px; /* Joylashuvi biroz o'zgardi yurakcha bilan urushmasligi uchun */
             background: var(--danger);
             color: white;
             padding: 4px 10px;
@@ -373,9 +420,9 @@
             position: fixed;
             bottom: 25px; left: 50%;
             transform: translateX(-50%);
-            width: 90%; max-width: 450px;
+            width: 95%; max-width: 500px;
             background: var(--p-dark);
-            padding: 10px 15px;
+            padding: 10px 10px;
             border-radius: 30px;
             display: flex;
             justify-content: space-around;
@@ -386,12 +433,13 @@
         .nav-item {
             color: rgba(255,255,255,0.4);
             text-decoration: none !important;
-            font-size: 10px; font-weight: 700;
+            font-size: 9px; font-weight: 700;
             text-align: center;
             transition: var(--transition);
+            flex: 1;
         }
 
-        .nav-item i { display: block; font-size: 22px; margin-bottom: 2px; }
+        .nav-item i { display: block; font-size: 20px; margin-bottom: 2px; }
         .nav-item.active { color: var(--p-light); transform: translateY(-5px); }
 
     </style>
@@ -416,10 +464,17 @@
             </div>
         </a>
 
-        <a th:href="@{/cart}" class="nav-cart-btn">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span class="badge-premium" id="global-badge" th:text="${cartItemsCount != null ? cartItemsCount : 0}">0</span>
-        </a>
+        <div class="header-actions">
+            <th:block sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="btn-auth">Login</a>
+                <a th:href="@{/register}" class="btn-auth">Register</a>
+            </th:block>
+
+            <a th:href="@{/cart}" class="nav-cart-btn">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="badge-premium" id="global-badge" th:text="${cartItemsCount != null ? cartItemsCount : 0}">0</span>
+            </a>
+        </div>
     </div>
 </header>
 
@@ -446,6 +501,10 @@
 <main class="container">
     <div class="product-grid">
         <div class="lux-card animate__animated animate__fadeInUp" th:each="product, iterStat : ${products}" th:style="'animation-delay:' + (${iterStat.index} * 0.1) + 's'">
+
+            <button class="btn-fav-card" th:onclick="'toggleFav(' + ${product.id} + ', this)'">
+                <i class="fa-solid fa-heart"></i>
+            </button>
 
             <div th:if="${product.discount > 0}" class="discount-badge" th:text="'-' + ${product.discount} + '%'">-15%</div>
 
@@ -490,6 +549,7 @@
 
 <nav class="bottom-nav">
     <a th:href="@{/}" class="nav-item active"><i class="fa-solid fa-house"></i>ASOSIY</a>
+    <a th:href="@{/favorites}" class="nav-item"><i class="fa-solid fa-heart"></i>SARALANGAN</a>
     <a th:href="@{/cart}" class="nav-item"><i class="fa-solid fa-basket-shopping"></i>SAVAT</a>
     <a th:href="@{/profile}" class="nav-item"><i class="fa-solid fa-user-circle"></i>PROFIL</a>
     <a th:href="@{/admin}" sec:authorize="hasRole('ADMIN')" class="nav-item"><i class="fa-solid fa-gear"></i>ADMIN</a>
@@ -504,7 +564,6 @@
         const container = document.getElementById('header-snow-box');
         if(!container) return;
 
-        // 12 ta qor zarrasi logo va matn bo'ylab
         for(let i = 0; i < 15; i++) {
             let flake = document.createElement('div');
             flake.className = 'snowflake-micro';
@@ -521,7 +580,7 @@
     document.addEventListener('DOMContentLoaded', initHeaderSnow);
 
     /* ================================================================
-       2. CART ENGINE (CSRF VA LOGIKA)
+       2. API ENGINE (CSRF VA LOGIKA)
        ================================================================
     */
     const csrf = () => ({
@@ -537,6 +596,19 @@
             method: 'POST',
             headers: { [header]: token },
             body: fd
+        });
+    }
+
+    // YANGI: SARALANGANLAR LOGIKASI
+    function toggleFav(pid, btn) {
+        apiCall('/favorites/toggle', pid).then(res => {
+            if(res.ok) {
+                btn.classList.toggle('active');
+                btn.classList.add('animate__animated', 'animate__heartBeat');
+                setTimeout(() => btn.classList.remove('animate__heartBeat'), 500);
+            } else if(res.status === 401) {
+                window.location.href = '/login';
+            }
         });
     }
 

@@ -40,16 +40,18 @@ public class HomeController {
     @PostMapping("/product/rate")
     @ResponseBody
     public String rateProduct(@RequestParam Long productId, @RequestParam int stars) {
-        // 1. Mahsulotni topasiz
         Product product = productService.findById(productId);
 
-        // 2. Yangi Review yaratasiz
         Review review = new Review();
         review.setStars(stars);
         review.setProduct(product);
-        // reviewService.save(review);
 
         return "OK";
+    }
+
+    @GetMapping("/favorites")
+    public String favoritesPage(Model model) {
+        return "favorites";
     }
 
 }

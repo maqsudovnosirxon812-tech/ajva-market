@@ -22,11 +22,9 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String viewOrders(Model model, Principal principal) {
-        // Foydalanuvchining buyurtmalari
         List<Order> orders = orderService.getUserOrders(principal.getName());
         model.addAttribute("orders", orders);
 
-        // Default telefon raqam va promocode
         model.addAttribute("defaultPhone", userService.getUserByUsername(principal.getName()).getPhone());
         model.addAttribute("defaultPromo", "ajva2026");
 

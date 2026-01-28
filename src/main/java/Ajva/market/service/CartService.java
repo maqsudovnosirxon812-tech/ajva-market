@@ -24,7 +24,6 @@ public class CartService {
     @Autowired
     private UserRepository userRepository;
 
-    // Savatga mahsulot qo'shish
     @Transactional
     public void addToCart(String username, Long productId) {
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -45,14 +44,12 @@ public class CartService {
         cartItemRepository.save(item);
     }
 
-    // Savatdagi mahsulotlarni olish
     @Transactional(readOnly = true)
     public List<CartItem> getCartItems(String username) {
         User user = userRepository.findByUsername(username).orElseThrow();
         return cartItemRepository.findByUser(user);
     }
 
-    // Quantity ni oshirish
     @Transactional
     public void increase(String username, Long productId) {
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -68,7 +65,6 @@ public class CartService {
         }
     }
 
-    // Quantity ni kamaytirish
     @Transactional
     public void decrease(String username, Long productId) {
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -81,13 +77,11 @@ public class CartService {
                 item.setQuantity(item.getQuantity() - 1);
                 cartItemRepository.save(item);
             } else {
-                // Quantity 1 bo'lsa, o'chirish
                 cartItemRepository.delete(item);
             }
         }
     }
 
-    // Savatdan mahsulotni o'chirish
     @Transactional
     public void remove(String username, Long productId) {
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -95,7 +89,6 @@ public class CartService {
         cartItemRepository.deleteByUserAndProduct(user, product);
     }
 
-    // Savatdagi jami narx
     @Transactional(readOnly = true)
     public int getTotalPrice(String username) {
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -104,7 +97,6 @@ public class CartService {
                 .sum();
     }
 
-    // BUYURTMA BERISH: savat tozalansin va mahsulot quantity kamaysin
     @Transactional
     public void checkout(String username) {
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -119,12 +111,10 @@ public class CartService {
                 );
             }
 
-            // Ombordagi miqdorni kamaytirish
             product.setQuantity(product.getQuantity() - item.getQuantity());
             productRepository.save(product);
         }
 
-        // Savatni tozalash
         cartItemRepository.deleteAll(items);
     }
     @Transactional

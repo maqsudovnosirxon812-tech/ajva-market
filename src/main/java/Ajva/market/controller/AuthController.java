@@ -59,7 +59,7 @@ public class AuthController {
 
             user.setProfileImage("/profile-photos/" + fileName);
         } else {
-            user.setProfileImage("/images/default-man-profile.png");
+            user.setProfileImage("default-man-profile.png");
         }
 
         userService.saveUser(user);

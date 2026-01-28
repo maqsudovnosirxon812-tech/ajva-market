@@ -14,12 +14,12 @@ public class User {
     private String password;
     private String fullName;
     private String phone;
-    private String role; // ROLE_USER, ROLE_ADMIN, ROLE_WORKER
+    private String role;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String profileImage;
-    private Double salary; // Ishchi maoshi
-    private Integer completedOrders = 0; // Yetkazib berilgan buyurtmalar soni
+    private Double salary;
+    private Integer completedOrders = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;

@@ -18,17 +18,16 @@ public class Order {
     private Product product;
 
     private int quantity;
-    private String status; // pending, accepted, rejected, delivered
-    private String image;// agar karta orqali bo‘lsa foydalanuvchi rasm yuklashi
+    private String status;
+    private String image;
     private String phone;
     private String address;
     private String paymentType;
     private LocalDateTime orderDate = LocalDateTime.now();
 
     @ManyToOne
-    private User worker; // Buyurtmani qabul qilgan ishchi
+    private User worker;
 
-    // Getters va Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public User getUser() { return user; }

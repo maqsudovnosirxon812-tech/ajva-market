@@ -10,9 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 
 @Controller
@@ -36,10 +38,21 @@ public class ProfileController {
 
         if (!file.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            String uploadDir = "./profile-photos/";
 
-            Files.write(Paths.get(uploadDir + fileName), file.getBytes());
-            user.setProfileImage("/profile-photos/" + fileName);
+            String srcPathStr = "src/main/resources/static/images/profile/";
+            Path srcPath = Paths.get(srcPathStr);
+
+            String targetPathStr = "target/classes/static/images/profile/";
+            Path targetPath = Paths.get(targetPathStr);
+
+            if (!Files.exists(srcPath)) Files.createDirectories(srcPath);
+            if (!Files.exists(targetPath)) Files.createDirectories(targetPath);
+
+            byte[] bytes = file.getBytes();
+            Files.write(srcPath.resolve(fileName), bytes);
+            Files.write(targetPath.resolve(fileName), bytes);
+
+            user.setProfileImage("/images/profile/" + fileName);
             userService.saveUser(user);
         }
         return "redirect:/profile";

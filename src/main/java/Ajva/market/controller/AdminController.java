@@ -32,23 +32,19 @@ public class AdminController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Static papkaga yuklash uchun yo'l (production'da tashqi path bo'lgani ma'qul)
     private final String UPLOAD_DIR = "target/classes/static/images/products/";
 
     @GetMapping
     public String adminHome(Model model) {
-        // Asosiy ma'lumotlar
         List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
         model.addAttribute("orders", orderService.getAllOrders());
 
-        // Ishchilarni filtrlab olish
         List<User> workers = userService.getAllUsers().stream()
                 .filter(u -> "ROLE_WORKER".equals(u.getRole()))
                 .toList();
         model.addAttribute("workers", workers);
 
-        // Dashboard uchun tezkor statistika
         model.addAttribute("totalProducts", products.size());
         model.addAttribute("totalWorkers", workers.size());
         model.addAttribute("totalOrders", orderService.getAllOrders().size());
@@ -56,7 +52,6 @@ public class AdminController {
         return "admin-home";
     }
 
-    // --- MAHSULOTLAR (OMBOR) NAZORATI ---
 
     @PostMapping("/product/add")
     public String addProduct(@ModelAttribute Product product,
@@ -104,14 +99,12 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    // --- ISHCHILAR (WORKERS) NAZORATI ---
 
     @PostMapping("/worker/add")
     public String addWorker(@ModelAttribute User worker) {
         worker.setPassword(passwordEncoder.encode(worker.getPassword()));
         worker.setRole("ROLE_WORKER");
 
-        // Default profil rasm
         if (worker.getProfileImage() == null || worker.getProfileImage().isEmpty()) {
             worker.setProfileImage("/images/default-man-profile.png");
         }
@@ -130,11 +123,9 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    // --- ALOQA VA TIZIM ---
 
     @GetMapping("/chat/{phone}")
     public String openChat(@PathVariable String phone) {
-        // Telefon formatini tozalash (masalan: +99890 -> 99890)
         String cleanPhone = phone.replaceAll("[^0-9]", "");
         return "redirect:https://t.me/+" + cleanPhone;
     }

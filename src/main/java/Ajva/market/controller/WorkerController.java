@@ -26,7 +26,6 @@ public class WorkerController {
 
     @GetMapping
     public String workerHome(Model model) {
-        // XATOLIK TO'G'IRLANDI: "all" o'rniga barcha buyurtmalarni oluvchi metod chaqirildi
         List<Order> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
         return "worker-home";
@@ -48,13 +47,11 @@ public class WorkerController {
     public String completeOrder(@RequestParam Long orderId, Principal principal) {
         Order order = orderService.getOrderById(orderId);
 
-        // Principal orqali hozirgi login qilgan ishchini topamiz
         User worker = userService.getUserByUsername(principal.getName());
 
-        order.setStatus("DELIVERED"); // Statusni yetkazildi deb o'zgartiramiz
+        order.setStatus("DELIVERED");
         order.setWorker(worker);
 
-        // Ishchining bajarilgan buyurtmalar sonini oshiramiz
         if (worker.getCompletedOrders() == null) {
             worker.setCompletedOrders(1);
         } else {
